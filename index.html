@@ -7,7 +7,7 @@
     <title>Calculadora de Resistores</title>
     <style>
         body {
-            background-image: url(WhatsApp\ Image\ 2025-04-04\ at\ 07.24.31.jpeg);
+            background-image: url('https://picsum.photos/1920/1080');
             font-family: Arial, sans-serif;
             background-color: #f0f0f0;
             margin: 0;
@@ -16,25 +16,24 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-
         }
 
-        select,
-        input,
+        /*  select,
+        input,*/
         .container {
             background-color: rgb(232, 246, 215);
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            padding: 1px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             width: 300px;
         }
 
         button {
             width: 100%;
-            padding: 10px;
+            padding: 5px;
             margin: 10px 0;
             font-size: 16px;
-            border-radius: 5px;
+            border-radius: 10px;
             border: 1px solid #ccc;
         }
 
@@ -56,8 +55,7 @@
         }
 
         b {
-            color: #067a2f;
-
+            color: #067a10;
         }
 
         .nome {
@@ -65,120 +63,242 @@
         }
 
         label {
-            color: #8c0404;
+            color: #1d1c1c;
         }
 
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0 15px 0;
+            box-sizing: border-box;
+            font-size: 16px;
+            border: 1px solid #aaa;
+            border-radius: 4px;
+        }
+
+        .faixa {
+            width: 10px;
+            height: 80%;
+            border-radius: 1px;
+            margin: 0 1px;
+        }
+
+        .valor {
+            color: #510daa;
+        }
     </style>
 
     <script>
+        const cores = {
+            "preto": 0,
+            "marrom": 1,
+            "vermelho": 2,
+            "laranja": 3,
+            "amarelo": 4,
+            "verde": 5,
+            "azul": 6,
+            "violeta": 7,
+            "cinza": 8,
+            "branco": 9
+        };
+
+        const coresInverso = Object.entries(cores).reduce((obj, [cor, val]) => {
+            obj[val] = cor;
+            return obj;
+        }, {});
+
+        const corFaixaVisual = {
+            "preto": "#000000",
+            "marrom": "#8B4513",
+            "vermelho": "#FF0000",
+            "laranja": "#FFA500",
+            "amarelo": "#FFFF00",
+            "verde": "#008000",
+            "azul": "#0000FF",
+            "violeta": "#8A2BE2",
+            "cinza": "#808080",
+            "branco": "#FFFFFF",
+            "±1%": "#8B4513",
+            "±2%": "#FF0000",
+            "±0.5%": "#008000",
+            "±0.25%": "#0000FF",
+            "±0.1%": "#8A2BE2",
+            "±0.05%": "#808080",
+            "±5%": "gold",
+            "±10%": "silver"
+        };
+
+        function atualizarCoresVisuais() {
+            document.getElementById("faixa1").style.backgroundColor = corFaixaVisual[document.getElementById("cor1").value];
+            document.getElementById("faixa2").style.backgroundColor = corFaixaVisual[document.getElementById("cor2").value];
+            document.getElementById("faixa3").style.backgroundColor = corFaixaVisual[document.getElementById("cor3").value]; // multiplicador
+            document.getElementById("faixa4").style.backgroundColor = "#f5f5dc"; // espaço visual (sem cor)
+            document.getElementById("faixa5").style.backgroundColor = corFaixaVisual[document.getElementById("cor4").value]; // tolerância
+        }
+
+
         function calcularResistor() {
-            // Obter os valores das cores
+            atualizarCoresVisuais(); // Atualiza visual também
             var cor1 = document.getElementById("cor1").value;
             var cor2 = document.getElementById("cor2").value;
             var cor3 = document.getElementById("cor3").value;
             var cor4 = document.getElementById("cor4").value;
 
-            // Definindo os valores dos códigos de cores
-            var cores={
-                "preto": 0,
-                "marrom": 1,
-                "vermelho": 2,
-                "laranja": 3,
-                "amarelo": 4,
-                "verde": 5,
-                "azul": 6,
-                "violeta": 7,
-                "cinza": 8,
-                "branco": 9
-            };
-
-            // Convertendo as cores para valores numéricos
             var valor1 = cores[cor1];
             var valor2 = cores[cor2];
-            var multiplicador = Math.pow(10, cores[cor3]); // O multiplicador é a potência de 10 da terceira cor
-            var valor4 = cores[cor4];
-            // Calculando o valor do resistor
+            var multiplicador = Math.pow(10, cores[cor3]);
+
             var valorResistor = (valor1 * 10 + valor2) * multiplicador;
+            var resultado = valorResistor >= 1000 ? (valorResistor / 1000) + "kΩ " + cor4 : valorResistor + "Ω " + cor4;
 
-            // Se o valor for maior ou igual a 1000, formatar com "k"
-            var resultado = valorResistor;
-            if (valorResistor >= 1000) {
-                resultado = (valorResistor / 1000) + "k" + "Ω" + " " + cor4;
-            } else {
-                // Abaixo de 1000 ohms, coloca com 'Ω'
-                resultado = valorResistor + "Ω" + " " + cor4;
-            }
-
-            // Exibir o resultado
             document.getElementById("resultado").innerText = "Valor do Resistor: " + resultado;
         }
+
+        function converterParaCores() {
+            let valor = document.getElementById("valorResistor").value.toLowerCase().replace(/\s/g, "");
+            let multiplicador = 0;
+
+            if (valor.includes("k")) {
+                valor = parseFloat(valor) * 1000;
+            } else if (valor.includes("m")) {
+                valor = parseFloat(valor) * 1000000;
+            } else {
+                valor = parseFloat(valor);
+            }
+
+            if (isNaN(valor) || valor < 1 || valor > 9900000000) {
+                document.getElementById("resultadoCores").innerText = "Valor inválido.";
+                return;
+            }
+
+            let sig = Math.floor(valor);
+            let str = sig.toString();
+
+            let dig1 = parseInt(str[0]);
+            let dig2 = parseInt(str[1] || 0);
+            multiplicador = str.length - 2;
+
+            let cor1 = coresInverso[dig1];
+            let cor2 = coresInverso[dig2];
+            let cor3 = coresInverso[multiplicador];
+
+            if (cor1 && cor2 && cor3) {
+                // Atualiza os selects com as cores
+                document.getElementById("cor1").value = cor1;
+                document.getElementById("cor2").value = cor2;
+                document.getElementById("cor3").value = cor3;
+
+                // Atualiza visual do resistor
+                atualizarCoresVisuais();
+
+                document.getElementById("resultadoCores").innerText =
+                    `Cores dos anéis: ${cor1}, ${cor2}, ${cor3}`;
+            } else {
+                document.getElementById("resultadoCores").innerText = "Não foi possível determinar as cores.";
+            }
+        }
+
+
+        // Atualiza visual em tempo real
+        window.addEventListener('DOMContentLoaded', () => {
+            ['cor1', 'cor2', 'cor3', 'cor4'].forEach(id => {
+                document.getElementById(id).addEventListener('change', atualizarCoresVisuais);
+            });
+            atualizarCoresVisuais(); // Inicializa
+        });
     </script>
 
 </head>
+
+<body>
+    <div class="container">
+        <h1>
+            <p class="nome">Ruberlandio</p>Calculadora de Resistor
+        </h1>
+
+        <!-- Cores para valor -->
+        <label for="cor1"> Cor 1: </label>
+        <select id="cor1">
+            <option value="preto">Preto</option>
+            <option value="marrom">Marrom</option>
+            <option value="vermelho">Vermelho</option>
+            <option value="laranja">Laranja</option>
+            <option value="amarelo">Amarelo</option>
+            <option value="verde">Verde</option>
+            <option value="azul">Azul</option>
+            <option value="violeta">Violeta</option>
+            <option value="cinza">Cinza</option>
+            <option value="branco">Branco</option>
+        </select><br><br>
+
+        <label for="cor2">Cor 2: </label>
+        <select id="cor2">
+            <option value="preto">Preto</option>
+            <option value="marrom">Marrom</option>
+            <option value="vermelho">Vermelho</option>
+            <option value="laranja">Laranja</option>
+            <option value="amarelo">Amarelo</option>
+            <option value="verde">Verde</option>
+            <option value="azul">Azul</option>
+            <option value="violeta">Violeta</option>
+            <option value="cinza">Cinza</option>
+            <option value="branco">Branco</option>
+        </select><br><br>
+
+        <label for="cor3">Multiplicador: </label>
+        <select id="cor3">
+            <option value="preto">Preto</option>
+            <option value="marrom">Marrom</option>
+            <option value="vermelho">Vermelho</option>
+            <option value="laranja">Laranja</option>
+            <option value="amarelo">Amarelo</option>
+            <option value="verde">Verde</option>
+            <option value="azul">Azul</option>
+            <option value="violeta">Violeta</option>
+        </select><br><br>
+
+        <label for="cor4">Tolerância (opcional): </label>
+        <select id="cor4">
+            <option value="±1%">Marrom</option>
+            <option value="±2%">Vermelho</option>
+            <option value="±0.5%">Verde</option>
+            <option value="±0.25%">Azul</option>
+            <option value="±0.1%">Violeta</option>
+            <option value="±0.05%">Cinza</option>
+            <option value="±5%">Dourado</option>
+            <option value="±10%">Prateado</option>
+        </select><br><br>
+        <div style="text-align: center; margin: 20px 0;">
+            <div id="resistorVisual"
+                style="display: flex; justify-content: center; align-items: center; height: 40px; background: #dcdcdc; border-radius: 10px;">
+                <div style="width: 30px; height: 40px; background: #888; border-radius: 5px 0 0 5px;"></div>
+                <div style="display: flex; align-items: center; justify-content: space-evenly; width: 220px; height: 40px; background: #f5f5dc;"
+                    id="faixaContainer">
+                    <div class="faixa" id="faixa1"></div>
+                    <div class="faixa" id="faixa2"></div>
+                    <div class="faixa" id="faixa3"></div>
+                    <div class="faixa" id="faixa4"></div>
+                    <div style="width: 5px;"></div> <!-- espaço entre multiplicador e tolerância -->
+                    <div class="faixa" id="faixa5"></div>
+                </div>
+                <div style="width: 30px; height: 40px; background: #888; border-radius: 0 5px 5px 0;"></div>
+            </div>
+        </div>
+
+
+
+        <button onclick="calcularResistor()">Calcular</button>
+        <b id="resultado"></b>
+
+        <!-- Valor para cores -->
+        <br>
+        <hr><br>
+
+        <label for="valorResistor"><b class="valor">Valor do Resistor</b>:</label>
+        <input type="text" id="valorResistor" placeholder="Ex: 1k, 100R"><br><br>
+        <button onclick="converterParaCores()">Converter para Cores</button>
+        <b id="resultadoCores"></b>
+    </div>
 </body>
-
-<div class="container">
-
-    <h1>
-        <p class="nome">Ruberlandio</p>Calculadora de Resistor
-    </h1>
-
-    <label for="cor1"> Cor 1: </label>
-    <select id="cor1">
-        <option value="preto">Preto </option>
-        <option value="marrom">Marrom </option>
-        <option value="vermelho">Vermelho </option>
-        <option value="laranja">Laranja </option>
-        <option value="amarelo">Amarelo </option>
-        <option value="verde">Verde </option>
-        <option value="azul">Azul </option>
-        <option value="violeta">Violeta </option>
-        <option value="cinza">Cinza </option>
-        <option value="branco">Branco </option>
-    </select><br><br>
-
-    <label for="cor2">Cor 2: </label>
-    <select id="cor2">
-        <option value="preto">Preto </option>
-        <option value="marrom">Marrom </option>
-        <option value="vermelho">Vermelho </option>
-        <option value="laranja">Laranja </option>
-        <option value="amarelo">Amarelo </option>
-        <option value="verde">Verde </option>
-        <option value="azul">Azul </option>
-        <option value="violeta">Violeta </option>
-        <option value="cinza">Cinza </option>
-        <option value="branco">Branco </option>
-    </select><br><br>
-
-    <label for="cor3">Multiplicador: </label>
-    <select id="cor3">
-        <option value="preto">Preto </option>
-        <option value="marrom">Marrom </option>
-        <option value="vermelho">Vermelho </option>
-        <option value="laranja">Laranja </option>
-        <option value="amarelo">Amarelo </option>
-        <option value="verde">Verde </option>
-        <option value="azul">Azul </option>
-        <option value="violeta">Violeta </option>
-    </select><br><br>
-
-    <label for="cor4">Tolerância (opcional): </label>
-    <select id="cor4">
-        <option value="±1%">Marrom </option>
-        <option value="±2%">Vermelho </option>
-        <option value="±0.5%">Verde </option>
-        <option value="±0.25%">Azul </option>
-        <option value="±0.1%">Violeta </option>
-        <option value="±0.05%">Cinza </option>
-        <option value="±5%">Dourado </option>
-        <option value="±10%">Prateado </option>
-    </select><br><br>
-
-    <button onclick="calcularResistor()">Calcular</button>
-
-    <b id="resultado"></b>
-
-</div>
 
 </html>
