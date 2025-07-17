@@ -9,7 +9,6 @@
         body {
             background-image: url('https://picsum.photos/1920/1080');
             font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
             margin: 0;
             padding: 0;
             display: flex;
@@ -18,8 +17,6 @@
             height: 100vh;
         }
 
-        /*  select,
-        input,*/
         .container {
             background-color: rgb(232, 246, 215);
             padding: 1px;
@@ -35,12 +32,8 @@
             font-size: 16px;
             border-radius: 10px;
             border: 1px solid #ccc;
-        }
-
-        button {
-            background-color: #52067e;
-            color: white;
-            border: none;
+            background-color: #6d11c4;
+            color: rgb(241, 239, 243);
             cursor: pointer;
         }
 
@@ -53,14 +46,14 @@
             color: #52067e;
             font-size: 120%;
         }
-           /* Faixas do resistor - responsivo */
-        #resistorVisual {
-            max-width: 80%;
-            margin: 15px auto;
-        }
 
         b {
             color: #067a10;
+        }
+
+        #resistorVisual {
+            max-width: 80%;
+            margin: 15px auto;
         }
 
         .nome {
@@ -92,127 +85,6 @@
             color: #510daa;
         }
     </style>
-
-    <script>
-        const cores = {
-            "preto": 0,
-            "marrom": 1,
-            "vermelho": 2,
-            "laranja": 3,
-            "amarelo": 4,
-            "verde": 5,
-            "azul": 6,
-            "violeta": 7,
-            "cinza": 8,
-            "branco": 9
-        };
-
-        const coresInverso = Object.entries(cores).reduce((obj, [cor, val]) => {
-            obj[val] = cor;
-            return obj;
-        }, {});
-
-        const corFaixaVisual = {
-            "preto": "#000000",
-            "marrom": "#8B4513",
-            "vermelho": "#FF0000",
-            "laranja": "#FFA500",
-            "amarelo": "#FFFF00",
-            "verde": "#008000",
-            "azul": "#0000FF",
-            "violeta": "#8A2BE2",
-            "cinza": "#808080",
-            "branco": "#FFFFFF",
-            "±1%": "#8B4513",
-            "±2%": "#FF0000",
-            "±0.5%": "#008000",
-            "±0.25%": "#0000FF",
-            "±0.1%": "#8A2BE2",
-            "±0.05%": "#808080",
-            "±5%": "gold",
-            "±10%": "silver"
-        };
-
-        function atualizarCoresVisuais() {
-            document.getElementById("faixa1").style.backgroundColor = corFaixaVisual[document.getElementById("cor1").value];
-            document.getElementById("faixa2").style.backgroundColor = corFaixaVisual[document.getElementById("cor2").value];
-            document.getElementById("faixa3").style.backgroundColor = corFaixaVisual[document.getElementById("cor3").value]; // multiplicador
-            document.getElementById("faixa4").style.backgroundColor = "#f5f5dc"; // espaço visual (sem cor)
-            document.getElementById("faixa5").style.backgroundColor = corFaixaVisual[document.getElementById("cor4").value]; // tolerância
-        }
-
-
-        function calcularResistor() {
-            atualizarCoresVisuais(); // Atualiza visual também
-            var cor1 = document.getElementById("cor1").value;
-            var cor2 = document.getElementById("cor2").value;
-            var cor3 = document.getElementById("cor3").value;
-            var cor4 = document.getElementById("cor4").value;
-
-            var valor1 = cores[cor1];
-            var valor2 = cores[cor2];
-            var multiplicador = Math.pow(10, cores[cor3]);
-
-            var valorResistor = (valor1 * 10 + valor2) * multiplicador;
-            var resultado = valorResistor >= 1000 ? (valorResistor / 1000) + "kΩ " + cor4 : valorResistor + "Ω " + cor4;
-
-            document.getElementById("resultado").innerText = "Valor do Resistor: " + resultado;
-        }
-
-        function converterParaCores() {
-            let valor = document.getElementById("valorResistor").value.toLowerCase().replace(/\s/g, "");
-            let multiplicador = 0;
-
-            if (valor.includes("k")) {
-                valor = parseFloat(valor) * 1000;
-            } else if (valor.includes("m")) {
-                valor = parseFloat(valor) * 1000000;
-            } else {
-                valor = parseFloat(valor);
-            }
-
-            if (isNaN(valor) || valor < 1 || valor > 9900000000) {
-                document.getElementById("resultadoCores").innerText = "Valor inválido.";
-                return;
-            }
-
-            let sig = Math.floor(valor);
-            let str = sig.toString();
-
-            let dig1 = parseInt(str[0]);
-            let dig2 = parseInt(str[1] || 0);
-            multiplicador = str.length - 2;
-
-            let cor1 = coresInverso[dig1];
-            let cor2 = coresInverso[dig2];
-            let cor3 = coresInverso[multiplicador];
-
-            if (cor1 && cor2 && cor3) {
-                // Atualiza os selects com as cores
-                document.getElementById("cor1").value = cor1;
-                document.getElementById("cor2").value = cor2;
-                document.getElementById("cor3").value = cor3;
-
-                // Atualiza visual do resistor
-                atualizarCoresVisuais();
-
-                document.getElementById("resultadoCores").innerText =
-                    `Cores dos anéis: ${cor1}, ${cor2}, ${cor3}`;
-            } else {
-                document.getElementById("resultadoCores").innerText = "Não foi possível determinar as cores.";
-            }
-        }
-
-
-        // Atualiza visual em tempo real
-        window.addEventListener('DOMContentLoaded', () => {
-            ['cor1', 'cor2', 'cor3', 'cor4'].forEach(id => {
-                document.getElementById(id).addEventListener('change', atualizarCoresVisuais);
-            });
-            atualizarCoresVisuais(); // Inicializa
-        });
-    </script>
-
 </head>
 
 <body>
@@ -221,46 +93,14 @@
             <p class="nome">Ruberlandio</p>Calculadora de Resistor
         </h1>
 
-        <!-- Cores para valor -->
         <label for="cor1"> Cor 1: </label>
-        <select id="cor1">
-            <option value="preto">Preto</option>
-            <option value="marrom">Marrom</option>
-            <option value="vermelho">Vermelho</option>
-            <option value="laranja">Laranja</option>
-            <option value="amarelo">Amarelo</option>
-            <option value="verde">Verde</option>
-            <option value="azul">Azul</option>
-            <option value="violeta">Violeta</option>
-            <option value="cinza">Cinza</option>
-            <option value="branco">Branco</option>
-        </select><br><br>
+        <select id="cor1"></select><br><br>
 
         <label for="cor2">Cor 2: </label>
-        <select id="cor2">
-            <option value="preto">Preto</option>
-            <option value="marrom">Marrom</option>
-            <option value="vermelho">Vermelho</option>
-            <option value="laranja">Laranja</option>
-            <option value="amarelo">Amarelo</option>
-            <option value="verde">Verde</option>
-            <option value="azul">Azul</option>
-            <option value="violeta">Violeta</option>
-            <option value="cinza">Cinza</option>
-            <option value="branco">Branco</option>
-        </select><br><br>
+        <select id="cor2"></select><br><br>
 
         <label for="cor3">Multiplicador: </label>
-        <select id="cor3">
-            <option value="preto">Preto</option>
-            <option value="marrom">Marrom</option>
-            <option value="vermelho">Vermelho</option>
-            <option value="laranja">Laranja</option>
-            <option value="amarelo">Amarelo</option>
-            <option value="verde">Verde</option>
-            <option value="azul">Azul</option>
-            <option value="violeta">Violeta</option>
-        </select><br><br>
+        <select id="cor3"></select><br><br>
 
         <label for="cor4">Tolerância (opcional): </label>
         <select id="cor4">
@@ -273,6 +113,7 @@
             <option value="±5%">Dourado</option>
             <option value="±10%">Prateado</option>
         </select><br><br>
+
         <div style="text-align: center; margin: 20px 0;">
             <div id="resistorVisual"
                 style="display: flex; justify-content: center; align-items: center; height: 40px; background: #dcdcdc; border-radius: 10px;">
@@ -283,27 +124,173 @@
                     <div class="faixa" id="faixa2"></div>
                     <div class="faixa" id="faixa3"></div>
                     <div class="faixa" id="faixa4"></div>
-                    <div style="width: 5px;"></div> <!-- espaço entre multiplicador e tolerância -->
+                    <div style="width: 5px;"></div>
                     <div class="faixa" id="faixa5"></div>
                 </div>
                 <div style="width: 30px; height: 40px; background: #888; border-radius: 0 5px 5px 0;"></div>
             </div>
         </div>
 
-
-
         <button onclick="calcularResistor()">Calcular</button>
         <b id="resultado"></b>
 
-        <!-- Valor para cores -->
-        <br>
-        <hr><br>
+        <br><hr><br>
 
         <label for="valorResistor"><b class="valor">Valor do Resistor</b>:</label>
-        <input type="text" id="valorResistor" placeholder="Ex: 1k, 100R"><br><br>
+        <input type="text" id="valorResistor" placeholder="Ex: 1k, 4.7M, 0.22"><br><br>
         <button onclick="converterParaCores()">Converter para Cores</button>
         <b id="resultadoCores"></b>
     </div>
-</body>
+<script>
+    const cores = {
+        "preto": 0,
+        "marrom": 1,
+        "vermelho": 2,
+        "laranja": 3,
+        "amarelo": 4,
+        "verde": 5,
+        "azul": 6,
+        "violeta": 7,
+        "cinza": 8,
+        "branco": 9,
+        "dourado": -1,
+        "prateado": -2
+    };
 
+    const coresInverso = Object.entries(cores).reduce((obj, [cor, val]) => {
+        obj[val] = cor;
+        return obj;
+    }, {});
+
+    const corFaixaVisual = {
+        "preto": "#000000",
+        "marrom": "#8B4513",
+        "vermelho": "#FF0000",
+        "laranja": "#FFA500",
+        "amarelo": "#FFFF00",
+        "verde": "#008000",
+        "azul": "#0000FF",
+        "violeta": "#8A2BE2",
+        "cinza": "#808080",
+        "branco": "#FFFFFF",
+        "dourado": "gold",
+        "prateado": "silver",
+        "±1%": "#8B4513",
+        "±2%": "#FF0000",
+        "±0.5%": "#008000",
+        "±0.25%": "#0000FF",
+        "±0.1%": "#8A2BE2",
+        "±0.05%": "#808080",
+        "±5%": "gold",
+        "±10%": "silver"
+    };
+
+    function atualizarCoresVisuais() {
+        document.getElementById("faixa1").style.backgroundColor = corFaixaVisual[document.getElementById("cor1").value];
+        document.getElementById("faixa2").style.backgroundColor = corFaixaVisual[document.getElementById("cor2").value];
+        document.getElementById("faixa3").style.backgroundColor = corFaixaVisual[document.getElementById("cor3").value];
+        document.getElementById("faixa4").style.backgroundColor = "#f5f5dc";
+        document.getElementById("faixa5").style.backgroundColor = corFaixaVisual[document.getElementById("cor4").value];
+    }
+
+    function calcularResistor() {
+        atualizarCoresVisuais();
+        var cor1 = document.getElementById("cor1").value;
+        var cor2 = document.getElementById("cor2").value;
+        var cor3 = document.getElementById("cor3").value;
+        var cor4 = document.getElementById("cor4").value;
+
+        var valor1 = cores[cor1];
+        var valor2 = cores[cor2];
+        var multiplicador = Math.pow(10, cores[cor3]);
+
+        var valorResistor = (valor1 * 10 + valor2) * multiplicador;
+
+        let resultado;
+        if (valorResistor >= 1000000) {
+            resultado = (valorResistor / 1000000).toFixed(2).replace(/\.00$/, "") + "MΩ " + cor4;
+        } else if (valorResistor >= 1000) {
+            resultado = (valorResistor / 1000).toFixed(2).replace(/\.00$/, "") + "kΩ " + cor4;
+        } else {
+            resultado = valorResistor + "Ω " + cor4;
+        }
+
+        document.getElementById("resultado").innerText = "Valor do Resistor: " + resultado;
+    }
+
+    function converterParaCores() {
+        let valor = document.getElementById("valorResistor").value.toLowerCase().replace(/\s/g, "");
+        let multiplicador = 0;
+
+        if (valor.includes("m")) {
+            valor = parseFloat(valor.replace("m", "")) * 1000000;
+        } else if (valor.includes("k")) {
+            valor = parseFloat(valor.replace("k", "")) * 1000;
+        } else if (valor.includes("r") || valor.includes("ω")) {
+            valor = parseFloat(valor.replace(/[rω]/g, ""));
+        } else {
+            valor = parseFloat(valor);
+        }
+
+        if (isNaN(valor) || valor < 0.01 || valor > 9900000000) {
+            document.getElementById("resultadoCores").innerText = "Valor inválido.";
+            return;
+        }
+
+        let sig, mult;
+
+        if (valor < 1) {
+            sig = Math.round(valor * 100);  // exemplo: 0.22 -> 22
+            mult = -2;
+        } else {
+            mult = Math.floor(Math.log10(valor)) - 1;
+            sig = Math.round(valor / Math.pow(10, mult));
+        }
+
+        let str = sig.toString().padStart(2, "0");
+        let dig1 = parseInt(str[0]);
+        let dig2 = parseInt(str[1]);
+
+        let cor1 = coresInverso[dig1];
+        let cor2 = coresInverso[dig2];
+        let cor3 = coresInverso[mult];
+
+        if (cor1 && cor2 && cor3) {
+            document.getElementById("cor1").value = cor1;
+            document.getElementById("cor2").value = cor2;
+            document.getElementById("cor3").value = cor3;
+            atualizarCoresVisuais();
+
+            document.getElementById("resultadoCores").innerText =
+                `Cores dos anéis: ${cor1}, ${cor2}, ${cor3}`;
+        } else {
+            document.getElementById("resultadoCores").innerText = "Não foi possível determinar as cores.";
+        }
+    }
+
+    // Popula os selects com base no objeto cores
+    window.addEventListener('DOMContentLoaded', () => {
+        const seletorCores = ['cor1', 'cor2', 'cor3'];
+        const coresValidas = Object.keys(cores);
+
+        seletorCores.forEach(id => {
+            const select = document.getElementById(id);
+            coresValidas.forEach(cor => {
+                let nome = cor.charAt(0).toUpperCase() + cor.slice(1);
+                let option = document.createElement("option");
+                option.value = cor;
+                option.textContent = nome;
+                select.appendChild(option);
+            });
+        });
+
+        // Define padrão inicial
+        document.getElementById("cor1").value = "vermelho";
+        document.getElementById("cor2").value = "vermelho";
+        document.getElementById("cor3").value = "marrom";
+
+        atualizarCoresVisuais();
+    });
+</script>
+</body>
 </html>
